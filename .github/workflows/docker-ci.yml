@@ -1,0 +1,30 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: ['main'] # Runs when you push to main branch
+  pull_request:
+    branches: ['main'] # Runs on PR to main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      # Skipped test step
+      # - name: Run tests
+      #   run: npm test
+
+      - name: Build project
+        run: npm run build
