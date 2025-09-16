@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
@@ -7,36 +7,43 @@ on:
     branches: ['main']
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      # Step 1: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Step 2: Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '20'
 
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Skipped test step
-      # - name: Run tests
-      #   run: npm test
+      # Step 4: Build Angular app
+      - name: Build Angular app
+        run: npm run build -- --prod
 
-      - name: Build project
-        run: npm run build
+      # Step 5: Build Docker image
+      - name: Build Docker image
+        run: docker build -t krsunny99/angular-docker-app:latest .
 
+      # Step 6: Debug - Print Docker username (safe)
+      - name: Test Docker username secret
+        run: echo "Docker username is ${{ secrets.DOCKER_USERNAME }}"
+
+      # Step 7: Log in to Docker Hub using secrets
       - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker image
-        run: docker build -t krsunny99/angular-docker-app:latest .
-
+      # Step 8: Push Docker image to Docker Hub
       - name: Push Docker image
         run: docker push krsunny99/angular-docker-app:latest
