@@ -2,9 +2,9 @@ name: CI Pipeline
 
 on:
   push:
-    branches: ['main'] # Runs when you push to main branch
+    branches: ['main']
   pull_request:
-    branches: ['main'] # Runs on PR to main
+    branches: ['main']
 
 jobs:
   build:
@@ -28,3 +28,15 @@ jobs:
 
       - name: Build project
         run: npm run build
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: docker build -t krsunny99/angular-docker-app:latest .
+
+      - name: Push Docker image
+        run: docker push krsunny99/angular-docker-app:latest
