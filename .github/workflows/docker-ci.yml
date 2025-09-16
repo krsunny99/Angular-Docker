@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code
+      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -25,9 +25,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Build Angular app
+      # Step 4: Build Angular app (Angular 16+ syntax)
       - name: Build Angular app
-        run: npm run build -- --prod
+        run: npm run build -- --configuration production
 
       # Step 5: Build Docker image
       - name: Build Docker image
@@ -37,7 +37,7 @@ jobs:
       - name: Test Docker username secret
         run: echo "Docker username is ${{ secrets.DOCKER_USERNAME }}"
 
-      # Step 7: Log in to Docker Hub using secrets
+      # Step 7: Log in to Docker Hub using GitHub Secrets
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
