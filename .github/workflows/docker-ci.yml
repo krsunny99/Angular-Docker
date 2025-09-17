@@ -47,3 +47,7 @@ jobs:
       # Step 8: Push Docker image to Docker Hub
       - name: Push Docker image
         run: docker push krsunny99/angular-docker-app:latest
+
+      # Step 9: Trigger Render Deploy Hook
+      - name: Trigger Render Deploy Hook
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
