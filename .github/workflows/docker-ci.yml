@@ -25,29 +25,34 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Build Angular app (Angular 16+ syntax)
+      # Step 4: Run unit tests (Angular)
+      - name: Run Angular unit tests
+        run: npm run test -- --watch=false --browsers=ChromeHeadless
+        # ^ Ensures CI mode: no watch, headless Chrome
+
+      # Step 5: Build Angular app
       - name: Build Angular app
         run: npm run build -- --configuration production
 
-      # Step 5: Build Docker image
+      # Step 6: Build Docker image
       - name: Build Docker image
         run: docker build -t krsunny99/angular-docker-app:latest .
 
-      # Step 6: Debug - Print Docker username (safe)
+      # Step 7: Debug - Print Docker username (safe)
       - name: Test Docker username secret
         run: echo "Docker username is ${{ secrets.DOCKER_USERNAME }}"
 
-      # Step 7: Log in to Docker Hub using GitHub Secrets
+      # Step 8: Log in to Docker Hub using GitHub Secrets
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 8: Push Docker image to Docker Hub
+      # Step 9: Push Docker image to Docker Hub
       - name: Push Docker image
         run: docker push krsunny99/angular-docker-app:latest
 
-      # Step 9: Trigger Render Deploy Hook
+      # Step 10: Trigger Render Deploy Hook
       - name: Trigger Render Deploy Hook
         run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
